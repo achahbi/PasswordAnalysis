@@ -80,7 +80,7 @@ def RunQuery():
     print("+ This menu allow you to run your query on the file remember :")
     print("### Table content description      (PASSWORDS_FILE_DETAILS)                         ")
     print("")
-    print("### Label             ,tage       ,Integer                                          ")
+    print("### Label  (Text)     ,TAG(Text)  ,VALUE(Integer )                                        ")
     print("------------------------------------------------------------------------------------")
     print("### File              ,detailLabel,value                                            ")
     print("### Password Strength , strength  ,number                                           ")
