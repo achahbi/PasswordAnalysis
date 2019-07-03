@@ -98,7 +98,8 @@ def getpasswordStrengh(password):
 ############################################
 ###################### Main extraction
 def getFileData(file):
-    with open(file,mode="r") as source:
+    # with open(file,mode="r") as source: # UPDATE V1.1
+    with open(file,mode="r",errors='ignore') as source:
         data=[]
         maj=0
         mins=0
@@ -116,8 +117,10 @@ def getFileData(file):
                 "Weak":0
             }
         dangerousChars=[]
-        charusage=[0]*128
-        lengths=[0]*100
+        #charusage=[0]*256 Use dict # UPDATE V1.1
+        charusage={}
+        #lengths=[0]*100 # UPDATE V1.1
+        lengths={}
         for password in source:
             numberofLines=numberofLines+1
             if(verbos and (numberofLines % 100 ==0)): print("Processing Line {}------->".format(numberofLines))
@@ -126,16 +129,23 @@ def getFileData(file):
               maxlength=len(password)
             if len(password)<minlength:
                 minlength=len(password)
-            ###### Statistics about Passwords lengths
-            lengths[len(password)]=lengths[len(password)]+1
+            ###### Statistics about Passwords lengths # UPDATE V1.1
+            if(len(password) in lengths.keys()):
+                lengths[len(password)]=lengths[len(password)]+1
+            else:
+                lengths[len(password)]=1
             ###### Counting total number of chars in the file (For Ratios)
             taillesenchars=taillesenchars+len(password)
             ###### UPDATE PASSWORD STRENGHT STATISTICS
             ps=getpasswordStrengh(getdifferentChars(password))
             passwordStrength[ps]=passwordStrength[ps]+1
             for c in password:
-                # Update char usage count
-                charusage[ord(c)]=charusage[ord(c)]+1
+                # Update char usage count # UPDATE V1.1
+                if(ord(c) in charusage.keys()): 
+                    charusage[ord(c)]=charusage[ord(c)]+1
+                else:
+                    charusage[ord(c)]=1
+                    
                 # Verification Upper 65-90
                 if c.isupper():
                     maj=maj+1
@@ -166,8 +176,8 @@ def getFileData(file):
         data.append(["Password strength","Medium ",passwordStrength["Medium"]])
         data.append(["Password strength","Weak ",passwordStrength["Weak"]])
         ############## Data related to charusage
-        for i in range(128):
-            data.append(["Char Usage",str(i),charusage[i]])
+        for key,value in charusage.items():
+            data.append(["Char Usage",key,value])
         ############## Data related to Lengths
         for i in range(100):
             if(lengths[i]!=0):
